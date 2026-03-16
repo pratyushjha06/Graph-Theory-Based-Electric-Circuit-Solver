@@ -2,10 +2,3 @@ R1 1 2 10
 R2 2 3 5
 R3 3 0 20
 V1 1 0 12
-
-| Line      | Meaning                                  |
-| --------- | ---------------------------------------- |
-| R1 1 2 10 | Resistor between node 1 and 2 with 10Ω   |
-| R2 2 3 5  | Resistor between node 2 and 3 with 5Ω    |
-| R3 3 0 20 | Resistor between node 3 and ground       |
-| V1 1 0 12 | Voltage source between node 1 and ground |
