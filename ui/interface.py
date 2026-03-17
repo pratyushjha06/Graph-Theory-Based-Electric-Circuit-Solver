@@ -37,10 +37,11 @@ if st.button("Visualize Circuit"):
     try:
         edges, labels = load_circuit(file_path)
 
-        st.write("### Circuit Graph Generated ")
+        st.write("### Circuit Graph Generated")
 
-        # Draw graph (this will open matplotlib window)
-        draw_circuit(edges, labels)
+        fig = draw_circuit(edges, labels)
+
+        st.pyplot(fig)   # show inside UI
 
         st.success("Visualization complete!")
 

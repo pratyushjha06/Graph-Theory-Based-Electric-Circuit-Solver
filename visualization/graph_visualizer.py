@@ -40,7 +40,12 @@ def draw_circuit(edges, labels):
     for edge in edges:
         G.add_edge(edge[0], edge[1])
 
-    pos = nx.kamada_kawai_layout(G)
+    try:
+        pos = nx.kamada_kawai_layout(G)
+    except:
+        pos = nx.spring_layout(G)
+
+    fig, ax = plt.subplots()
 
     nx.draw(
         G,
@@ -49,13 +54,15 @@ def draw_circuit(edges, labels):
         node_size=2000,
         node_color="lightblue",
         font_size=12,
-        font_weight="bold"
+        font_weight="bold",
+        ax=ax
     )
 
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=labels, ax=ax)
 
-    plt.title("Circuit Graph Representation")
-    plt.show()
+    ax.set_title("Circuit Graph Representation")
+
+    return fig   
 
 
 if __name__ == "__main__":

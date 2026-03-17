@@ -163,6 +163,18 @@ Meaning:
 | V1        | 1     | 0     | 12V   |
 
 ---
+▶️ How to Run the Project
+
+After completing the setup, follow these steps to run the application.
+
+Run the Streamlit App
+
+From the project root directory, use:
+
+```
+python -m streamlit run ui/interface.py
+```
+---
 
 ## Technologies Used
 
