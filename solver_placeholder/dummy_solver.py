@@ -3,7 +3,7 @@ def get_dummy_solution(edges):
     node_voltages = {}
     branch_currents = {}
 
-    # Extract unique nodes
+    # Extract nodes
     nodes = set()
     for u, v in edges:
         nodes.add(u)

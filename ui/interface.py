@@ -1,7 +1,8 @@
 import streamlit as st
 import os
 from visualization.graph_visualizer import load_circuit, draw_circuit
-from solver_placeholder.dummy_solver import get_dummy_solution
+from integration.api import solve_circuit
+from results.result_display import format_node_voltages, format_branch_currents
 
 
 # Page config
@@ -15,11 +16,10 @@ st.markdown("### Visualize and Analyze Electric Circuits")
 st.sidebar.header("⚙️ Controls")
 
 uploaded_file = st.sidebar.file_uploader("Upload Circuit File (.txt)", type=["txt"])
-
 use_sample = st.sidebar.checkbox("Use Sample Circuit", value=True)
 
 
-# Decide file path
+# File selection
 if uploaded_file is not None:
     file_path = os.path.join("data", "uploaded_circuit.txt")
 
@@ -34,7 +34,7 @@ else:
     file_path = None
 
 
-# Main button
+# Run button
 if st.sidebar.button("🚀 Run Solver"):
 
     if file_path is None:
@@ -43,31 +43,32 @@ if st.sidebar.button("🚀 Run Solver"):
         try:
             edges, labels = load_circuit(file_path)
 
-            # Layout: 2 columns
             col1, col2 = st.columns([2, 1])
 
-            # LEFT: Graph
+            # LEFT → Graph
             with col1:
                 st.subheader("📊 Circuit Graph")
                 fig = draw_circuit(edges, labels)
                 st.pyplot(fig)
 
-            # RIGHT: Results
+            # RIGHT → Results
             with col2:
                 st.subheader("⚡ Results")
 
-                node_voltages, branch_currents = get_dummy_solution(edges)
+                node_voltages, branch_currents = solve_circuit(file_path, edges)
+
+                voltages = format_node_voltages(node_voltages)
+                currents = format_branch_currents(branch_currents)
 
                 st.markdown("#### 🔹 Node Voltages")
-                for node, voltage in node_voltages.items():
-                    st.write(f"**V{node} = {voltage} V**")
+                for v in voltages:
+                    st.write(f"**{v}**")
 
                 st.markdown("#### 🔹 Branch Currents")
-                for branch, current in branch_currents.items():
-                    st.write(f"**{branch} = {current} A**")
+                for c in currents:
+                    st.write(f"**{c}**")
 
             st.success("✅ Simulation Complete")
 
         except Exception as e:
             st.error(f"Error: {e}")
-

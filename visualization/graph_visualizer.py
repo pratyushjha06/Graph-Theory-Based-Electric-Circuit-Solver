@@ -11,13 +11,11 @@ def load_circuit(file_path):
 
             line = line.strip()
 
-            # Skip empty lines
             if not line:
                 continue
 
             parts = line.split()
 
-            # Skip invalid lines
             if len(parts) < 4:
                 print("Skipping invalid line:", line)
                 continue
@@ -28,7 +26,7 @@ def load_circuit(file_path):
             value = parts[3]
 
             edges.append((node1, node2))
-            labels[(node1, node2)] = component + " (" + value + ")"
+            labels[(node1, node2)] = f"{component} ({value})"
 
     return edges, labels
 
@@ -41,7 +39,7 @@ def draw_circuit(edges, labels):
         G.add_edge(edge[0], edge[1])
 
     try:
-        pos = nx.kamada_kawai_layout(G)
+        pos = nx.planar_layout(G)
     except:
         pos = nx.spring_layout(G)
 
@@ -62,13 +60,4 @@ def draw_circuit(edges, labels):
 
     ax.set_title("Circuit Graph Representation")
 
-    return fig   
-
-
-if __name__ == "__main__":
-
-    file_path = "data/sample_circuit.txt"
-
-    edges, labels = load_circuit(file_path)
-
-    draw_circuit(edges, labels)
+    return fig
