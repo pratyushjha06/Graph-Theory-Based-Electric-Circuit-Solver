@@ -1,55 +1,38 @@
+from integration.graph_builder import build_graph_from_file
 from integration.matrix_solver import build_mna_matrix
 from integration.solver import run_solver
 
 
 def solve_circuit(file_path, edges):
-    """
-    Convert edges → circuit_data → solve
-    """
+    # ignore edges from UI; use graph builder
+    graph = build_graph_from_file(file_path)
+    nodes = graph.nodes
+    elements = graph.elements
+    edges = graph.edges   # ✅ now exists
 
-    # 🔹 Step 1: Convert edges to branches format
     branches = []
-
-    for idx, edge in enumerate(edges):
-        # edge format: (node1, node2)
-        n1, n2 = edge
-
-        # Temporary assumption: all are resistors (for now)
+    for el in elements:
         branches.append({
-            "name": f"R{idx+1}",
-            "type": "R",
-            "node1": n1,
-            "node2": n2,
-            "value": 10   # default value (IMPORTANT)
+            "name": el.name,
+            "type": el.etype,
+            "node1": el.n1,
+            "node2": el.n2,
+            "value": el.value,
         })
 
-    # 🔹 Step 2: Build nodes list
-    nodes = set()
-    for n1, n2 in edges:
-        nodes.add(n1)
-        nodes.add(n2)
-
-    nodes = list(nodes)
-
-    # 🔹 Step 3: Build circuit_data
     circuit_data = {
         "nodes": nodes,
-        "branches": branches
+        "branches": branches,
+        # "incidence": graph.incidence_matrix,  # optional
     }
 
-    # 🔹 Step 4: Matrix generation
     result = build_mna_matrix(circuit_data)
-
     G = result["G_matrix"]
     I = result["I_vector"]
     node_mapping = result["node_index"]
 
-    # 🔹 Step 5: Convert edges for solver
-    solver_edges = []
-    for b in branches:
-        solver_edges.append((b["name"], b["node1"], b["node2"], b["value"]))
+    solver_edges = [(el.name, el.n1, el.n2, el.value) for el in elements]
 
-    # 🔹 Step 6: Run solver
     solver_result = run_solver(G, I, node_mapping, solver_edges)
 
     if "error" in solver_result:
@@ -57,4 +40,3 @@ def solve_circuit(file_path, edges):
         return {}, {}
 
     return solver_result["node_voltages"], solver_result["branch_currents"]
-    
